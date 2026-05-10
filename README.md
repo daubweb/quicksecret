@@ -22,6 +22,12 @@ Before using `quicksecret`, ensure you have an Infisical Machine Identity and th
 - `INFISICAL_MACHINE_ID`: Your Infisical Machine Identity Client ID.
 - `INFISICAL_MACHINE_SECRET`: Your Infisical Machine Identity Client Secret.
 
+Optional environment variables:
+
+- `INFISICAL_PROJECT_ID`: Default Infisical project ID (can be the project slug).
+- `INFISICAL_ENVIRONMENT`: Default environment (e.g., "dev", "prod"). Defaults to "dev".
+- `INFISICAL_SITE_URL`: Infisical site URL. Defaults to "https://app.infisical.com".
+
 ## Usage
 
 ### Basic Usage

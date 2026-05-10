@@ -106,3 +106,23 @@ def test_inject_all_to_env(mock_client, env_vars):
     
     assert os.environ["K1"] == "V1"
     del os.environ["K1"]
+
+def test_init_from_env_vars(mock_client, env_vars):
+    """Test initialization using INFISICAL_PROJECT_ID and INFISICAL_ENVIRONMENT."""
+    with patch.dict(os.environ, {
+        "INFISICAL_PROJECT_ID": "env-project",
+        "INFISICAL_ENVIRONMENT": "staging"
+    }):
+        qs = QuickSecret()
+        assert qs.project_id == "env-project"
+        assert qs.environment == "staging"
+
+def test_init_explicit_overrides_env_vars(mock_client, env_vars):
+    """Test that explicit arguments override environment variables."""
+    with patch.dict(os.environ, {
+        "INFISICAL_PROJECT_ID": "env-project",
+        "INFISICAL_ENVIRONMENT": "staging"
+    }):
+        qs = QuickSecret(project_id="explicit-project", environment="prod")
+        assert qs.project_id == "explicit-project"
+        assert qs.environment == "prod"

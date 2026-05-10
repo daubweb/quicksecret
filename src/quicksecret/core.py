@@ -15,16 +15,16 @@ class QuickSecret:
     def __init__(
         self, 
         project_id: Optional[str] = None, 
-        environment: str = "dev", 
-        site_url: str = "https://app.infisical.com"
+        environment: Optional[str] = None, 
+        site_url: Optional[str] = None
     ):
         """
         Initialize the QuickSecret client.
         
         Args:
-            project_id: The Infisical project ID (found in Infisical project settings).
-            environment: The environment to fetch secrets from (e.g., "dev", "prod").
-            site_url: The Infisical site URL. Defaults to the public Infisical cloud.
+            project_id: The Infisical project ID. Defaults to INFISICAL_PROJECT_ID env var.
+            environment: The environment to fetch secrets from. Defaults to INFISICAL_ENVIRONMENT or "dev".
+            site_url: The Infisical site URL. Defaults to INFISICAL_SITE_URL or "https://app.infisical.com".
             
         Raises:
             ValueError: If INFISICAL_MACHINE_ID or INFISICAL_MACHINE_SECRET is not set.
@@ -37,19 +37,20 @@ class QuickSecret:
                 "Environment variables INFISICAL_MACHINE_ID and INFISICAL_MACHINE_SECRET must be set for authentication."
             )
             
-        self.project_id = project_id
-        self.environment = environment
+        self.project_id = project_id or os.getenv("INFISICAL_PROJECT_ID")
+        self.environment = environment or os.getenv("INFISICAL_ENVIRONMENT") or "dev"
+        actual_site_url = site_url or os.getenv("INFISICAL_SITE_URL") or "https://app.infisical.com"
         
         settings = ClientSettings(
             client_id=client_id,
             client_secret=client_secret,
-            site_url=site_url
+            site_url=actual_site_url
         )
         self.client = InfisicalClient(settings)
 
     def get_secret(
         self, 
-        secret_key: str, 
+        secret_name: str, 
         environment: Optional[str] = None, 
         path: str = "/", 
         project_id: Optional[str] = None
@@ -58,7 +59,7 @@ class QuickSecret:
         Fetch a single secret value from Infisical.
         
         Args:
-            secret_key: The name of the secret to fetch.
+            secret_name: The name of the secret to fetch.
             environment: Optional override for the environment.
             path: The path of the secret (defaults to "/").
             project_id: Optional override for the project ID.
@@ -76,7 +77,7 @@ class QuickSecret:
             raise ValueError("Project ID must be provided during initialization or as a method argument.")
             
         secret = self.client.getSecret(options=GetSecretOptions(
-            secret_key=secret_key,
+            secret_name=secret_name,
             project_id=pid,
             environment=env,
             path=path
@@ -115,11 +116,11 @@ class QuickSecret:
             path=path
         ))
         
-        return {s.secret_key: s.secret_value for s in secrets}
+        return {s.secret_name: s.secret_value for s in secrets}
 
     def inject_to_env(
         self, 
-        secret_key: str, 
+        secret_name: str, 
         environment: Optional[str] = None, 
         path: str = "/", 
         project_id: Optional[str] = None
@@ -128,7 +129,7 @@ class QuickSecret:
         Fetch a secret and inject it into the current process's environment variables.
         
         Args:
-            secret_key: The name of the secret to fetch and inject.
+            secret_name: The name of the secret to fetch and inject.
             environment: Optional override for the environment.
             path: The path of the secret.
             project_id: Optional override for the project ID.
@@ -136,8 +137,8 @@ class QuickSecret:
         Returns:
             The secret value.
         """
-        value = self.get_secret(secret_key, environment, path, project_id)
-        os.environ[secret_key] = value
+        value = self.get_secret(secret_name, environment, path, project_id)
+        os.environ[secret_name] = value
         return value
 
     def inject_all_to_env(
