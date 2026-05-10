@@ -19,8 +19,8 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/juliusdaub/quicksecret"
-Repository = "https://github.com/juliusdaub/quicksecret"
+Homepage = "https://github.com/daubweb/quicksecret"
+Repository = "https://github.com/daubweb/quicksecret"
 
 [tool.uv]
 dev-dependencies = [
