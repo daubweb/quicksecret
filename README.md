@@ -5,6 +5,8 @@ A minimal, platform-independent tool to fetch secrets from [Infisical](https://i
 ## Features
 
 - **Machine Identity Auth**: Uses `INFISICAL_MACHINE_ID` and `INFISICAL_MACHINE_SECRET` for authentication.
+- **Caching**: Optional internal caching of secrets to reduce API calls.
+- **Logging**: Integrated logging for better observability.
 - **Environment Injection**: Easily fetch secrets and inject them directly into your application's environment variables.
 - **Minimalistic**: Low overhead and easy to integrate.
 - **Git Installation**: Easily installable via `uv` directly from GitHub.
@@ -69,6 +71,14 @@ qs.inject_all_to_env()
 
 ```bash
 uv run pytest
+```
+
+### Building Documentation
+
+```bash
+cd docs
+uv run .\make.bat html  # On Windows
+uv run make html        # On Linux/macOS
 ```
 
 ## License
