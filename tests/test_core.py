@@ -199,10 +199,10 @@ def test_clear_cache(mock_client, env_vars):
     assert mock_instance.getSecret.call_count == 2
 
 
-def test_get_secret_empty_name(mock_client, env_vars):
-    """Test that empty secret name raises ValueError."""
+def test_get_secret_empty_key(mock_client, env_vars):
+    """Test that empty secret key raises ValueError."""
     qs = QuickSecret(project_id="test-project")
-    with pytest.raises(ValueError, match="Secret name cannot be empty"):
+    with pytest.raises(ValueError, match="Secret key cannot be empty"):
         qs.get_secret("")
 
 

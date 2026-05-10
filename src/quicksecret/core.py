@@ -72,7 +72,7 @@ class QuickSecret:
 
     def get_secret(
         self,
-        secret_name: str,
+        secret_key: str,
         environment: Optional[str] = None,
         path: str = "/",
         project_id: Optional[str] = None,
@@ -82,7 +82,7 @@ class QuickSecret:
         Fetch a single secret value from Infisical.
 
         Args:
-            secret_name: The name of the secret to fetch.
+            secret_key: The key of the secret to fetch.
             environment: Optional override for the environment.
             path: The path of the secret (defaults to "/").
             project_id: Optional override for the project ID.
@@ -92,11 +92,11 @@ class QuickSecret:
             The secret value as a string.
 
         Raises:
-            ValueError: If no project_id is available or if secret_name is empty.
+            ValueError: If no project_id is available or if secret_key is empty.
             Exception: If fetching the secret fails.
         """
-        if not secret_name:
-            raise ValueError("Secret name cannot be empty.")
+        if not secret_key:
+            raise ValueError("Secret key cannot be empty.")
 
         env = environment or self.environment
         pid = project_id or self.project_id
@@ -108,26 +108,26 @@ class QuickSecret:
                 "Project ID must be provided during initialization or as a method argument."
             )
 
-        cache_key = f"{pid}:{env}:{path}:{secret_name}"
+        cache_key = f"{pid}:{env}:{path}:{secret_key}"
         if should_cache and cache_key in self._cache:
-            logger.debug(f"Cache hit for secret: {secret_name}")
+            logger.debug(f"Cache hit for secret: {secret_key}")
             return self._cache[cache_key]
 
-        logger.info(f"Fetching secret: {secret_name} from {env}:{path}")
+        logger.info(f"Fetching secret: {secret_key} from {env}:{path}")
         try:
             secret = self.client.getSecret(
                 options=GetSecretOptions(
-                    secret_name=secret_name, project_id=pid, environment=env, path=path
+                    secret_name=secret_key, project_id=pid, environment=env, path=path
                 )
             )
             if secret is None:
-                raise ValueError(f"Secret '{secret_name}' not found in {env}:{path}")
+                raise ValueError(f"Secret '{secret_key}' not found in {env}:{path}")
             value = secret.secret_value
             if should_cache:
                 self._cache[cache_key] = value
             return value
         except Exception as e:
-            logger.error(f"Failed to fetch secret '{secret_name}': {e}")
+            logger.error(f"Failed to fetch secret '{secret_key}': {e}")
             raise
 
     def list_secrets(
@@ -147,7 +147,7 @@ class QuickSecret:
             use_cache: Optional override for cache usage.
 
         Returns:
-            A dictionary mapping secret names to their values.
+            A dictionary mapping secret keys to their values.
 
         Raises:
             ValueError: If no project_id is available.
@@ -181,8 +181,8 @@ class QuickSecret:
             if should_cache:
                 self._cache[cache_key] = result
                 # Also cache individual secrets
-                for name, value in result.items():
-                    self._cache[f"{pid}:{env}:{path}:{name}"] = value
+                for key, value in result.items():
+                    self._cache[f"{pid}:{env}:{path}:{key}"] = value
             return result
         except Exception as e:
             logger.error(f"Failed to list secrets in '{path}': {e}")
@@ -195,7 +195,7 @@ class QuickSecret:
 
     def inject_to_env(
         self,
-        secret_name: str,
+        secret_key: str,
         environment: Optional[str] = None,
         path: str = "/",
         project_id: Optional[str] = None,
@@ -204,7 +204,7 @@ class QuickSecret:
         Fetch a secret and inject it into the current process's environment variables.
 
         Args:
-            secret_name: The name of the secret to fetch and inject.
+            secret_key: The key of the secret to fetch and inject.
             environment: Optional override for the environment.
             path: The path of the secret.
             project_id: Optional override for the project ID.
@@ -212,8 +212,8 @@ class QuickSecret:
         Returns:
             The secret value.
         """
-        value = self.get_secret(secret_name, environment, path, project_id)
-        os.environ[secret_name] = value
+        value = self.get_secret(secret_key, environment, path, project_id)
+        os.environ[secret_key] = value
         return value
 
     def inject_all_to_env(
@@ -231,5 +231,5 @@ class QuickSecret:
             project_id: Optional override for the project ID.
         """
         secrets = self.list_secrets(environment, path, project_id)
-        for name, value in secrets.items():
-            os.environ[name] = value
+        for key, value in secrets.items():
+            os.environ[key] = value
