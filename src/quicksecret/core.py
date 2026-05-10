@@ -49,7 +49,7 @@ class QuickSecret:
 
     def get_secret(
         self, 
-        secret_name: str, 
+        secret_key: str, 
         environment: Optional[str] = None, 
         path: str = "/", 
         project_id: Optional[str] = None
@@ -58,7 +58,7 @@ class QuickSecret:
         Fetch a single secret value from Infisical.
         
         Args:
-            secret_name: The name of the secret to fetch.
+            secret_key: The name of the secret to fetch.
             environment: Optional override for the environment.
             path: The path of the secret (defaults to "/").
             project_id: Optional override for the project ID.
@@ -76,7 +76,7 @@ class QuickSecret:
             raise ValueError("Project ID must be provided during initialization or as a method argument.")
             
         secret = self.client.getSecret(options=GetSecretOptions(
-            secret_name=secret_name,
+            secret_key=secret_key,
             project_id=pid,
             environment=env,
             path=path
@@ -115,11 +115,11 @@ class QuickSecret:
             path=path
         ))
         
-        return {s.secret_name: s.secret_value for s in secrets}
+        return {s.secret_key: s.secret_value for s in secrets}
 
     def inject_to_env(
         self, 
-        secret_name: str, 
+        secret_key: str, 
         environment: Optional[str] = None, 
         path: str = "/", 
         project_id: Optional[str] = None
@@ -128,7 +128,7 @@ class QuickSecret:
         Fetch a secret and inject it into the current process's environment variables.
         
         Args:
-            secret_name: The name of the secret to fetch and inject.
+            secret_key: The name of the secret to fetch and inject.
             environment: Optional override for the environment.
             path: The path of the secret.
             project_id: Optional override for the project ID.
@@ -136,8 +136,8 @@ class QuickSecret:
         Returns:
             The secret value.
         """
-        value = self.get_secret(secret_name, environment, path, project_id)
-        os.environ[secret_name] = value
+        value = self.get_secret(secret_key, environment, path, project_id)
+        os.environ[secret_key] = value
         return value
 
     def inject_all_to_env(

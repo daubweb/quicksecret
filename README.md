@@ -7,18 +7,12 @@ A minimal, platform-independent tool to fetch secrets from [Infisical](https://i
 - **Machine Identity Auth**: Uses `INFISICAL_MACHINE_ID` and `INFISICAL_MACHINE_SECRET` for authentication.
 - **Environment Injection**: Easily fetch secrets and inject them directly into your application's environment variables.
 - **Minimalistic**: Low overhead and easy to integrate.
-- **PyPI Compatible**: Can be installed via pip or uv.
+- **Git Installation**: Easily installable via `uv` directly from GitHub.
 
 ## Installation
 
 ```bash
-pip install quicksecret
-```
-
-Or with `uv`:
-
-```bash
-uv add quicksecret
+uv add git+https://github.com/daubweb/quicksecret.git
 ```
 
 ## Setup
