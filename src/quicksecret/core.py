@@ -116,9 +116,7 @@ class QuickSecret:
         logger.info(f"Fetching secret: {secret_key} from {env}:{path}")
         try:
             secret = self.client.getSecret(
-                options=GetSecretOptions(
-                    secret_name=secret_key, project_id=pid, environment=env, path=path
-                )
+                options=GetSecretOptions(env, pid, secret_key, path=path)
             )
             if secret is None:
                 raise ValueError(f"Secret '{secret_key}' not found in {env}:{path}")
@@ -177,7 +175,7 @@ class QuickSecret:
             if secrets is None:
                 secrets = []
 
-            result = {s.secret_name: s.secret_value for s in secrets}
+            result = {s.secret_key: s.secret_value for s in secrets}
             if should_cache:
                 self._cache[cache_key] = result
                 # Also cache individual secrets

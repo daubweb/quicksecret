@@ -64,11 +64,11 @@ def test_list_secrets_success(mock_client, env_vars):
     mock_instance = mock_client.return_value
 
     s1 = MagicMock()
-    s1.secret_name = "K1"
+    s1.secret_key = "K1"
     s1.secret_value = "V1"
 
     s2 = MagicMock()
-    s2.secret_name = "K2"
+    s2.secret_key = "K2"
     s2.secret_value = "V2"
 
     mock_instance.listSecrets.return_value = [s1, s2]
@@ -104,7 +104,7 @@ def test_inject_all_to_env(mock_client, env_vars):
     mock_instance = mock_client.return_value
 
     s1 = MagicMock()
-    s1.secret_name = "K1"
+    s1.secret_key = "K1"
     s1.secret_value = "V1"
 
     mock_instance.listSecrets.return_value = [s1]
@@ -166,7 +166,7 @@ def test_list_secrets_with_cache(mock_client, env_vars):
     """Test that caching works for list_secrets and populates individual secrets."""
     mock_instance = mock_client.return_value
     s1 = MagicMock()
-    s1.secret_name = "K1"
+    s1.secret_key = "K1"
     s1.secret_value = "V1"
     mock_instance.listSecrets.return_value = [s1]
 

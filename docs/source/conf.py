@@ -15,8 +15,8 @@ project = "quicksecret"
 copyright = "2026, Julius Daub"
 author = "Julius Daub"
 
-version = "0.2.0"
-release = "0.2.0"
+version = "0.3.0"
+release = "0.3.0"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
